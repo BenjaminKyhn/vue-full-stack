@@ -1,10 +1,40 @@
 <template>
-    <h1>This is the Shopping Cart Page</h1>
+    <div id="page-wrap">
+        <h1>Shopping Cart</h1>
+        <div
+                v-for="product in cartItems"
+                :key="product.id"
+                class="product-container"
+        >
+            <img class="product-image" :src="product.imageUrl"/>
+            <div class="details-wrap">
+                <h3>{{product.name}}</h3>
+                <p>${{product.price}}</p>
+            </div>
+            <button class="remove-button">Remove From Cart</button>
+        </div>
+        <h3 id="total-price">Total: ${{totalPrice}}</h3>
+        <button id="checkout-button">Proceed to Checkout</button>
+    </div>
 </template>
 
 <script>
+    import {cartItems} from "../fake-data";
+
     export default {
-        name: "CartPage"
+        name: "CartPage",
+        data(){
+            return {
+                cartItems,
+            }
+        },
+        computed: {
+            totalPrice() {
+                return this.cartItems.reduce(
+                    (sum, item) => sum + Number(item.price), 0
+                )
+            }
+        }
     }
 </script>
 
@@ -26,7 +56,7 @@
     }
 
     .product-container {
-        align-content: 'center';
+        align-content: center;
         border-bottom: 1px solid #ddd;
         display: flex;
         padding: 16px;
