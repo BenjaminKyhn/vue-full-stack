@@ -1,9 +1,6 @@
 <template>
   <div id="app">
-    <div id="nav">
-      <router-link to="/">Home</router-link> |
-      <router-link to="/cart">Shopping Cart</router-link>
-    </div>
+    <nav-bar/>
     <router-view/>
   </div>
 </template>
@@ -32,3 +29,9 @@
     padding: 16px;
   }
 </style>
+<script>
+  import NavBar from "./components/NavBar";
+  export default {
+    components: {NavBar}
+  }
+</script>
