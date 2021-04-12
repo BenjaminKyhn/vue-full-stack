@@ -9,14 +9,19 @@
             <p>Average rating: {{product.averageRating}}</p>
             <button
                     id="add-to-cart"
-                    v-if="!showSuccessMessage"
+                    v-if="!showSuccessMessage && !itemIsInCart"
                     v-on:click="addToCart"
             >Add to Cart</button>
             <button
                     id="add-to-cart"
                     class="green-button"
-                    v-if="showSuccessMessage"
+                    v-if="showSuccessMessage && !itemIsInCart"
             >Successfully added item to cart!</button>
+            <button
+                    id="add-to-cart"
+                    class="grey-button"
+                    v-if="itemIsInCart"
+            >Item is already in cart</button>
             <h4>Description</h4>
             <p>{{product.description}}</p>
         </div>
@@ -34,8 +39,14 @@
         data(){
             return {
                 product: {},
-                showSuccessMessage: false
+                showSuccessMessage: false,
+                cartItems: []
             }
+        },
+        computed: {
+          itemIsInCart() {
+              return this.cartItems.some(item => item.id === this.product.id)
+          }
         },
         methods : {
             async addToCart() {
@@ -49,8 +60,11 @@
             }
         },
         async created() {
-            const result = await axios.get(`/api/products/${this.$route.params.id}`)
-            this.product = result.data;
+            const { data: product } = await axios.get(`/api/products/${this.$route.params.id}`)
+            this.product = product;
+
+            const { data: cartItems } = await axios.get('/api/users/12345/cart');
+            this.cartItems = cartItems;
         }
     }
 </script>
@@ -87,5 +101,9 @@
 
     .green-button {
         background-color: green;
+    }
+
+    .grey-button {
+        background-color: #888;
     }
 </style>
