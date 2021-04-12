@@ -152,6 +152,7 @@ app.get('/api/products/:productId', async (req, res) => {
     } else {
         res.status(404).json('Could not find the product')
     }
+    client.close()
 })
 
 app.post('/api/users/:userId/cart', (req, res) => {
