@@ -1,6 +1,6 @@
 import express from 'express'
 import bodyParser from 'body-parser'
-import { MongoClient } from 'mongodb'
+import {MongoClient} from 'mongodb'
 
 const products = [{
     id: '123',
@@ -107,20 +107,46 @@ app.get('/api/products', async (req, res) => {
             useUnifiedTopology: true
         }
     )
-
     const db = client.db('vue-full-stack')
+
     const products = await db.collection('products').find({}).toArray()
     res.status(200).json(products)
     client.close()
 })
 
-app.get('/api/users/:userId/cart', (req, res) => {
+app.get('/api/users/:userId/cart', async (req, res) => {
+    const client = await MongoClient.connect(
+        'mongodb://localhost:27017',
+        {
+            useNewUrlParser: true,
+            useUnifiedTopology: true
+        }
+    )
+    const db = client.db('vue-full-stack')
+
+    const {userId} = req.params;
+    const user = await db.collection('users').findOne({id: userId})
+    if (!user) return res.status(404).json('Could not find user!')
+    const products = await db.collection('products').find({}).toArray()
+    const cartItemIds = user.cartItems
+    const cartItems = cartItemIds.map(id => products.find(product => product.id === id))
+
     res.status(200).json(cartItems)
+    client.close()
 })
 
-app.get('/api/products/:productId', (req, res) => {
+app.get('/api/products/:productId', async (req, res) => {
+    const client = await MongoClient.connect(
+        'mongodb://localhost:27017',
+        {
+            useNewUrlParser: true,
+            useUnifiedTopology: true
+        }
+    )
+    const db = client.db('vue-full-stack')
+
     const {productId} = req.params;
-    const product = products.find((product) => product.id === productId);
+    const product = await db.collection('products').findOne({ id: productId})
     if (product) {
         res.status(200).json(product)
     } else {
