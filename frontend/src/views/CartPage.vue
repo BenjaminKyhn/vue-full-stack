@@ -8,7 +8,7 @@
 </template>
 
 <script>
-    import {cartItems} from "../fake-data";
+    import axios from 'axios'
     import ProductsList from "../components/ProductsList";
 
     export default {
@@ -16,7 +16,7 @@
         components: {ProductsList},
         data() {
             return {
-                cartItems,
+                cartItems: [],
             }
         },
         computed: {
@@ -25,6 +25,10 @@
                     (sum, item) => sum + Number(item.price), 0
                 )
             }
+        },
+        async created() {
+            const result = await axios.get('/api/users/12345/cart')
+            this.cartItems = result.data
         }
     }
 </script>
