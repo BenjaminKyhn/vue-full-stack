@@ -1,9 +1,11 @@
 import express from 'express'
 import bodyParser from 'body-parser'
 import {MongoClient} from 'mongodb'
+import path from 'path'
 
 const app = express();
 app.use(bodyParser.json());
+app.use('/images', express.static(path.join(__dirname, '../assets')))
 
 app.get('/api/products', async (req, res) => {
     const client = await MongoClient.connect(
